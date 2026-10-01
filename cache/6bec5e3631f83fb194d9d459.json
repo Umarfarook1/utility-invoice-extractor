@@ -1,0 +1,64 @@
+{
+  "label": "07_it_it_electricity_enel-energia.pdf",
+  "model": "gemini-3.6-flash",
+  "prompt_version": "2026-10-01.3",
+  "input_tokens": 9550,
+  "output_tokens": 2689,
+  "latency_s": 13.25,
+  "extraction": {
+    "is_utility_invoice": true,
+    "document_language": "it",
+    "country": "IT",
+    "vendor_name": {
+      "value": "Enel Energia S.p.A.",
+      "source_text": "Enel Energia S.p.A.",
+      "page": 1
+    },
+    "vendor_name_latin": null,
+    "invoice_number": {
+      "value": "5070881145",
+      "source_text": "fattura elettronica n. 5070881145",
+      "page": 1
+    },
+    "invoice_date": {
+      "value": "2024-09-09",
+      "source_text": "del 09/09/2024",
+      "page": 1
+    },
+    "service_address": {
+      "value": "VIA TANARO 35 00040 ARDEA RM",
+      "source_text": "INDIRIZZO DI FORNITURA: VIA TANARO 35 00040 ARDEA RM",
+      "page": 2
+    },
+    "currency": "EUR",
+    "total_amount": {
+      "value": 131.87,
+      "source_text": "TOTALE DA PAGARE 131,87 €",
+      "page": 1
+    },
+    "services": [
+      {
+        "utility_type": "electricity",
+        "usage": {
+          "value": 327.0,
+          "source_text": "327 kWh",
+          "page": 1
+        },
+        "usage_unit": "kWh",
+        "billing_period_start": {
+          "value": "2024-07-01",
+          "source_text": "01/07/2024",
+          "page": 3
+        },
+        "billing_period_end": {
+          "value": "2024-08-31",
+          "source_text": "31/08/2024",
+          "page": 3
+        },
+        "meter_reading_start": null,
+        "meter_reading_end": null
+      }
+    ],
+    "notes": []
+  }
+}

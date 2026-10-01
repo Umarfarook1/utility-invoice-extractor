@@ -1,0 +1,64 @@
+{
+  "label": "06_fr_fr_electricity_edf-entreprises.pdf",
+  "model": "gemini-3.6-flash",
+  "prompt_version": "2026-10-01.3",
+  "input_tokens": 4959,
+  "output_tokens": 2222,
+  "latency_s": 61.52,
+  "extraction": {
+    "is_utility_invoice": true,
+    "document_language": "fr",
+    "country": "FR",
+    "vendor_name": {
+      "value": "EDF",
+      "source_text": "EDF",
+      "page": 1
+    },
+    "vendor_name_latin": null,
+    "invoice_number": {
+      "value": "139",
+      "source_text": "n° 139",
+      "page": 1
+    },
+    "invoice_date": {
+      "value": "2017-02-27",
+      "source_text": "Facture du 27/02/2017",
+      "page": 1
+    },
+    "service_address": {
+      "value": "1 RUE 1565766971 75017 PARIS",
+      "source_text": "1 RUE 1565766971 75017 PARIS",
+      "page": 1
+    },
+    "currency": "EUR",
+    "total_amount": {
+      "value": 494.13,
+      "source_text": "494,13 €",
+      "page": 1
+    },
+    "services": [
+      {
+        "utility_type": "electricity",
+        "usage": {
+          "value": 3163.0,
+          "source_text": "3 163 kWh",
+          "page": 2
+        },
+        "usage_unit": "kWh",
+        "billing_period_start": {
+          "value": "2016-12-01",
+          "source_text": "01/12/2016",
+          "page": 2
+        },
+        "billing_period_end": {
+          "value": "2017-01-29",
+          "source_text": "29/01/2017",
+          "page": 2
+        },
+        "meter_reading_start": 57486.0,
+        "meter_reading_end": 60649.0
+      }
+    ],
+    "notes": []
+  }
+}

@@ -1,0 +1,327 @@
+{
+  "_meta": {
+    "method": "Labelled from the source PDFs only (rendered pages plus the text layer), without looking at pipeline output. Every value has page + verbatim evidence; judgement calls are in notes.",
+    "rules": "Same field definitions as the extraction prompt. vendor_name lists accepted aliases; a list for any other field means the bill itself prints conflicting values and either reading is correct; null means the bill does not print the value.",
+    "date": "2026-10-01"
+  },
+  "invoices": {
+    "01_us_en_electricity-gas_sdge.pdf": {
+      "language": "en",
+      "vendor_name": [
+        "San Diego Gas",
+        "SDG&E",
+        "SDGE"
+      ],
+      "invoice_date": "2016-06-08",
+      "service_address": "4800 ELECTRIC AVE, SD 92129",
+      "services": [
+        {
+          "utility_type": "gas",
+          "usage_amount": 23,
+          "usage_unit": "therms",
+          "billing_period_start": "2016-05-05",
+          "billing_period_end": "2016-06-06"
+        },
+        {
+          "utility_type": "electricity",
+          "usage_amount": 573,
+          "usage_unit": "kWh",
+          "billing_period_start": "2016-05-05",
+          "billing_period_end": "2016-06-06"
+        }
+      ],
+      "evidence": {
+        "vendor_name": "p1 stub: 'Write account number on check and make payable to San Diego Gas & Electric.' and 'SAN DIEGO GAS & ELECTRIC PO BOX 25111 SANTA ANA CA 92799-5111'; logo 'SDG&E' / 'SDGE'; p2 footer: '(c) 2016 San Diego Gas & Electric Company.'",
+        "invoice_date": "p1 bill header: 'DATE MAILED Jun 8, 2016' (repeated on bill pages 2 and 3 in p2). No 'bill date' or 'statement date' label exists; 'DATE DUE Jun 27, 2016' is the due date.",
+        "service_address": "p1 payment stub: 'SERVICE ADDRESS: 4800 ELECTRIC AVE SD 92129'. Same premises in the bill header: 'SERVICE FOR SDGE CUSTOMER 4800 ELECTRIC AVE SAN DIEGO, CA 92129'.",
+        "gas.usage_amount": "p1 summary: 'Gas May 5, 2016 - Jun 6, 2016 23 Therms 29.66'; p2 (bill page 2): '05/05/16 - 06/06/16 32 9717 9695 22 1.000 1.033 23' (Difference x Meter Constant x Therm Multiplier = Total Therms) and 'Gas Service (Details below) 23 Therms ... Therms used 16 7' (baseline + non-baseline = 23).",
+        "gas.usage_unit": "p1: '23 Therms'; p2: 'Rate/Therm $.90805 $1.08354'",
+        "gas.billing_period": "p1: 'Gas May 5, 2016 - Jun 6, 2016'; p2 (bill page 2) Gas Service: 'Billing Period Days ... 05/05/16 - 06/06/16 32'",
+        "electricity.usage_amount": "p1 summary: 'Electric May 5, 2016 - Jun 6, 2016 573 kWh 137.57'; p2 (bill page 3): '05/05/16 - 06/06/16 32 7115 6542 573 1.000 573' and 'SUMMER USAGE ... kWh used 433 140' (tier 1 + tier 2 = 573).",
+        "electricity.usage_unit": "p1: '573 kWh'; p2: 'Rate/kWh $0.05480 $0.25645'",
+        "electricity.billing_period": "p1: 'Electric May 5, 2016 - Jun 6, 2016'; p2 (bill page 3) Electric Service: 'Billing Period: 5/5/16 - 6/6/16 Total Days: 32'"
+      },
+      "notes": "The PDF is a 2-page guide wrapping bill pages 1-3 of 4; the numbered callouts (1-14) and the left-margin text are annotations, not bill values. Issue date = 'DATE MAILED' because the bill prints no other issue-date label. Address: the label is the bill's own 'SERVICE ADDRESS' line, verbatim ('SD' = San Diego). The header 'SERVICE FOR' block gives the same premises in full ('4800 ELECTRIC AVE, SAN DIEGO, CA 92129'), which also scores correct under the grader's 80% token rule (4/5 tokens). The mailing block '4800 ELECTRIC AVENUE ... 92129-2829' is the mailing address. Gas: the meter difference is 22 (volume units), times therm multiplier 1.033 = 23 therms; charges are per therm, so 23 therms. A rate change on day 27 splits the 'Gas Energy Charge' into two rows that each show 'Therms used 23' (26 of 32 days, 6 of 32 days). That is a proration of the same 23 therms, so not 46. The period is the overall 05/05-06/06. Usage history figures (41, 18 therms; 429, 505 kWh) are previous periods. The Account Summary's 'Total Amount Due $147.50' contradicts 'AMOUNT DUE $167.23' (a specimen typo) but does not affect any labelled field."
+    },
+    "02_us_en_gas_peoples-gas.pdf": {
+      "language": "en",
+      "vendor_name": [
+        "Peoples Gas",
+        "People's Gas"
+      ],
+      "invoice_date": "2026-02-03",
+      "service_address": "123 MAIN ST, CHICAGO IL 60601-6207",
+      "services": [
+        {
+          "utility_type": "gas",
+          "usage_amount": 72.6,
+          "usage_unit": "therms",
+          "billing_period_start": "2026-01-05",
+          "billing_period_end": "2026-02-02"
+        }
+      ],
+      "evidence": {
+        "vendor_name": "p1: logo 'PEOPLES GAS'; remittance 'Peoples Gas PO Box 1110 Glenview IL 60025'; 'peoplesgasdelivery.com'",
+        "invoice_date": "p1 header table: 'Bill Date 02/03/2026' (US MM/DD/YYYY = 3 Feb 2026). Not 'Next Meter Read Date 03/03/2026' or 'Payment Transfer Date 02/25/2026'.",
+        "service_address": "p1: 'Service Address 123 MAIN ST CHICAGO IL 60601-6207'",
+        "gas.usage_amount": "p1 Gas Service: 'Total Gas Use 69 CCF' then '69 CCF x 1.052 BTU = 72.6 Therms'; charges: 'Distribution Charge 72.6 Therms at $0.46583 $33.82'; Account Summary Feb 2026 column: 'Therms Used 72.6'",
+        "gas.usage_unit": "p1: '72.6 Therms at $0.41603' (Gas Charge)",
+        "gas.billing_period": "p1 Account Summary: 'Bill Period: 01/05/2026 to 02/02/2026', 'Billing Days 29'; meter: 'Actual Reading 02/02/2026 6299', 'Actual Reading 01/04/2026 -6230'"
+      },
+      "notes": "Usage is printed in two units: 69 CCF (metered volume) and 72.6 therms. Every volumetric charge is per therm, so 72.6 therms. Period: the bill prints an explicit 'Bill Period: 01/05/2026 to 02/02/2026', so that is used rather than the previous meter-read date 01/04/2026. Both are consistent with 'Billing Days 29': 01/05 to 02/02 is 29 days counted inclusively. The Jan 2026 (71.5) and Feb 2025 (76.4) columns are history. All dates are US MM/DD/YYYY. The '{14}' and 'WEC_PDF_Out' print-stream tags and the circled numbers 1-11 are annotations."
+    },
+    "03_gb_en_electricity-gas_octopus-energy.pdf": {
+      "language": "en",
+      "vendor_name": [
+        "Octopus Energy"
+      ],
+      "invoice_date": [
+        "2023-06-02",
+        "2023-06-01"
+      ],
+      "service_address": "2nd Floor, UK House, 164-182 Oxford Street, United Kingdom, W1D 1NN",
+      "services": [
+        {
+          "utility_type": "electricity",
+          "usage_amount": 76.4,
+          "usage_unit": "kWh",
+          "billing_period_start": "2023-05-17",
+          "billing_period_end": "2023-06-01"
+        },
+        {
+          "utility_type": "gas",
+          "usage_amount": 72.8,
+          "usage_unit": "kWh",
+          "billing_period_start": "2023-05-17",
+          "billing_period_end": "2023-06-01"
+        }
+      ],
+      "evidence": {
+        "vendor_name": "p1-p3 footer: 'Octopus Energy Operations Limited ... W octopus.energy ... Registered in England & Wales No. 14415312'; logo 'octopus energy'. p1 'Your Electricity Distributor is: Electricity North West' is the network operator, not the issuer.",
+        "invoice_date": "p1 (front page, bill header): 'Bill Reference: 145777963 (2nd June 2023)'. Conflicting: p3 'Bill Reference: 145777963 (1st June 2023)'.",
+        "service_address": "p2 Electricity and Gas sections: 'Supply Address: 2nd Floor, UK House, 164-182 Oxford Street United Kingdom, W1D 1NN'",
+        "electricity.usage_amount": "p2: 'Energy Used 76.4 kWh @ 47.73p/kWh £36.46'; readings '17th May 2023 26180.6 Smart meter reading' and '2nd Jun 2023 26257.0 Customer reading' (difference 76.4)",
+        "electricity.usage_unit": "p2: '76.4 kWh @ 47.73p/kWh'",
+        "electricity.billing_period": "p1 '1. We have charged you': 'Electricity 17th May 2023 - 1st June 2023 - £32.95'; p2: 'Flexible Octopus (17th May 2023 - 1st June 2023)', 'Standing Charge 16 days @ 47.40p/day'",
+        "gas.usage_amount": "p2: 'Energy Used* 72.8 kWh @ 12.01p/kWh £8.75'; 'Consumption 6.4 Units (m3)'; 'For you: 6.4 × 1.02264 × 39.9† ÷ 3.6 = 72.8'",
+        "gas.usage_unit": "p2: '72.8 kWh @ 12.01p/kWh'",
+        "gas.billing_period": "p1: 'Gas 17th May 2023 - 1st June 2023 - £11.92'; p2: 'Flexible Octopus (17th May 2023 - 1st June 2023)', 'Standing Charge 16 days @ 26.16p/day'"
+      },
+      "notes": "This is an annotated specimen: the dark side panels and callouts ('Billing Period', 'Supply Address', and so on) explain the bill and are not values. Issue date: p1 prints '(2nd June 2023)' and p3 prints '(1st June 2023)' for the same bill reference. 2 June is labelled because p1 is the bill's own header, and because the bill uses customer readings dated 2nd June 2023, so it cannot have been issued on 1 June. The grader does an exact match, so 2023-06-01 will score wrong. Address: the specimen supply address is the 2nd floor of Octopus's own building. It is labelled 'Supply Address', so it counts. Octopus's registered/trading office ('UK House, 5th floor, 164-182 Oxford Street, London, W1D 1NN') is a different address and scores only 9/12 tokens (fails). The billing address on p1 is the same premises. Period: the p1 statement header '18th May 2023 - 1st June 2023' is the account balance period. The per-fuel charge periods are '17th May 2023 - 1st June 2023' (16 days, matching the '16 days' standing charges and the p3 averages 76.4/16 = 4.77 and 72.8/16 = 4.55 kWh/day), so those are used. The meter read dates (17 May / 2 Jun) are not used because a period is printed. Gas is printed as 6.4 m3 and 72.8 kWh; charges are per kWh, so 72.8 kWh. 'Estimated Annual Usage' (3923.8 kWh, 7766 kWh) is not billed usage. | invoice_date accepts both: the specimen prints 'Bill Reference: 145777963 (2nd June 2023)' on p1 and '(1st June 2023)' on p3."
+    },
+    "04_gb_en_water_affinity-water.pdf": {
+      "language": "en",
+      "vendor_name": [
+        "Affinity Water"
+      ],
+      "invoice_date": "2020-03-04",
+      "service_address": "456 Sample Street, Sampleton, Sampleshire, AB12 3AB",
+      "services": [
+        {
+          "utility_type": "water",
+          "usage_amount": 96,
+          "usage_unit": "m3",
+          "billing_period_start": "2019-08-16",
+          "billing_period_end": "2020-02-10"
+        }
+      ],
+      "evidence": {
+        "vendor_name": "p1: logo 'Affinity Water', 'Affinity Water bill you and collect payment on behalf of Thames Water.'; p6: 'Affinity Water Limited Registered Office: Tamblin Way, Hatfield, Herts, AL10 9EZ.'",
+        "invoice_date": "p1 header: 'Date 04 March 2020'",
+        "service_address": "p1: 'For water supply to 456 Sample Street, Sampleton, Sampleshire, AB12 3AB'. Postal/billing address differs: 'Mr A B Sample 6 Sample Street Sampleton Sampleshire AB12 3AB'.",
+        "water.usage_amount": "p2: 'Volume used: 96m3 (96,000 litres)'; clean water '16/08/19 - 10/02/20, 96.00 x £1.0551 £101.29'; waste water '16/08/19 - 10/02/20, 96.00 x £0.8672 £83.25'; readings 6,623 - 6,527 = 96",
+        "water.usage_unit": "p2: 'Volume used: 96m3'; charge lines '96.00 x £1.0551' (per m3)",
+        "water.billing_period": "p2: 'Previous: 6,527 Actual (16/08/2019)', 'Current: 6,623 Actual (10/02/2020)'; volumetric lines '16/08/19 - 10/02/20' (UK DD/MM/YY)"
+      },
+      "notes": "Clean water (Affinity) and waste water (Thames Water) form one water entry. Both are charged on the same 96 m3, so usage is 96 m3, not 192. The quantity is also printed as 96,000 litres; the charges are 96.00 x rate per m3, so the unit is m3. Period: the consumption period is the volumetric period 16/08/2019 to 10/02/2020, which equals the two meter-read dates. The fixed charges cover '01/10/19 - 31/03/20'. That is a standing-charge period billed partly in advance, not consumption, so it is not merged into the period. 'Balance from your last statement 31 August 2019' is an account boundary. Vendor: Affinity Water issues the bill; Thames Water is the waste-water undertaker it bills for, so it is not the issuer. Address: the 'For water supply to' address (456 Sample Street) differs from the postal address (6 Sample Street). All dates are UK DD/MM."
+    },
+    "05_de_de_electricity-gas-water_mindener-stadtwerke.pdf": {
+      "language": "de",
+      "vendor_name": [
+        "Mindener Stadtwerke"
+      ],
+      "invoice_date": "2023-01-20",
+      "service_address": "Musterstraße 99, 99999 Musterstadt",
+      "services": [
+        {
+          "utility_type": "electricity",
+          "usage_amount": 2157,
+          "usage_unit": "kWh",
+          "billing_period_start": "2022-01-01",
+          "billing_period_end": "2022-12-31"
+        },
+        {
+          "utility_type": "gas",
+          "usage_amount": 12853,
+          "usage_unit": "kWh",
+          "billing_period_start": "2022-01-01",
+          "billing_period_end": "2022-12-31"
+        },
+        {
+          "utility_type": "water",
+          "usage_amount": 77,
+          "usage_unit": "m3",
+          "billing_period_start": "2022-01-01",
+          "billing_period_end": "2022-12-31"
+        }
+      ],
+      "evidence": {
+        "vendor_name": "p1: 'Mindener Stadtwerke GmbH · Stiftstraße 62 · 32427 Minden' (sender line) and p2: 'Ihre Mindener Stadtwerke'; p1/p7: 'Die Abrechnung der Wasserlieferung erfolgt im Namen und auf Rechnung der Mindener Wasser GmbH.'",
+        "invoice_date": "p1: 'Rechnungsdatum: 20. Januar 2023'",
+        "service_address": "p1: 'Verbrauchsstelle: Musterstraße 99, 99999 Musterstadt' (same as the postal address 'Frau Monika Musterfrau, Musterstraße 99, 99999 Musterstadt')",
+        "billing_period (all services)": "p1: 'für den Zeitraum vom 01.01.2022 bis 31.12.2022 stellen wir Ihnen unsere Leistungen wie folgt in Rechnung'",
+        "electricity.usage_amount": "p3: 'Gesamtverbrauch Strom 01.01.2022 - 31.12.2022 2.157,000' (kWh); p1 summary row 'Strom 2.263 kWh 365 2.157 kWh 365 782,91' (2.263 = Vorverbrauch, previous year); Arbeitspreis lines 957 + 164 + 582 + 454 = 2.157 kWh",
+        "electricity.billing_period": "p3: 'Gesamtverbrauch Strom 01.01.2022 - 31.12.2022'",
+        "gas.usage_amount": "p5: 'Gesamtverbrauch Erdgas 01.01.2022 - 31.12.2022 12.853,000' in column '= thermische Energie in kWh'; billed per kWh: Arbeitspreis lines '7.883,000 kWh' + '1.158,000 kWh' + '3.812,000 kWh' = 12.853 kWh; p1 'Erdgas 18.959 kWh 365 12.853 kWh 365 1.176,09' (18.959 = Vorverbrauch)",
+        "gas.billing_period": "p5: 'Gesamtverbrauch Erdgas 01.01.2022 - 31.12.2022'",
+        "water.usage_amount": "p7: 'Gesamtverbrauch Wasser 01.01.2022 - 31.12.2022 77,000' (in m³); 'Arbeitspreis 77,000 m³ 1,450 €/m³ 111,65'; p1 'Wasser 95 m³ 365 77 m³ 365 227,27' (95 = Vorverbrauch)",
+        "water.billing_period": "p7: 'Gesamtverbrauch Wasser 01.01.2022 - 31.12.2022'"
+      },
+      "notes": "Vendor = Mindener Stadtwerke GmbH (sender, letterhead, signature). Water is billed 'im Namen und auf Rechnung der Mindener Wasser GmbH' but the document is issued by Mindener Stadtwerke, so Mindener Wasser alone is not accepted. Gas: meter measures m³ (824+60+61+169+229 = 1.343 m³, no total printed), but charges are per kWh, so label 12.853 kWh. 'Vorverbrauch' column (2.263 / 18.959 / 95) is last year and is NOT usage. Multiple sub-periods (meter-read splits and price-change splits) are summed; overall period 01.01.2022-31.12.2022. No separate sewer/Abwasser line on this bill; water = 77 m³ only. Pages 9-11 are glossary/notice pages with no customer values."
+    },
+    "06_fr_fr_electricity_edf-entreprises.pdf": {
+      "language": "fr",
+      "vendor_name": [
+        "EDF",
+        "Electricite de France"
+      ],
+      "invoice_date": "2017-02-27",
+      "service_address": "1 RUE 1565766971, 75017 PARIS",
+      "services": [
+        {
+          "utility_type": "electricity",
+          "usage_amount": 3163,
+          "usage_unit": "kWh",
+          "billing_period_start": "2016-12-01",
+          "billing_period_end": "2017-01-29"
+        }
+      ],
+      "evidence": {
+        "vendor_name": "p1: 'EDF Entreprises' logo; 'EDF-SA au capital de 1 054 568 341,50 € - Siège social : 22-30 avenue de Wagram 75382 Paris Cedex 08'; p2: 'Total EDF Electricité'",
+        "invoice_date": "p1: 'Facture du 27/02/2017 n° 139'; p2/p3: 'Détail de votre facture du 27/02/2017 n° 139'",
+        "service_address": "p1: 'Lieu de consommation 1 RUE 1565766971 75017 PARIS'; p2: 'Données Point de Livraison 1 RUE 1565766971 75017 PARIS' (billing address block 'NOM ENTREPRISE / ADRESSE / CP VILLE' is the invoice mailing address, not the delivery point)",
+        "electricity.usage_amount": "p2: 'Consommation (HT) Période Conso 3 163 kWh'; lines 'Electricité Période unique du 01/12/2016 au 31/12/2016 1 634 kWh 8,295 c€/kWh 135,54 €' + 'Electricité Période unique du 01/01/2017 au 29/01/2017 1 529 kWh 8,539 c€/kWh 130,56 €' = 3 163 kWh; p3 index 'Base 57486 le 01/12/2016 60649 le 30/01/2017' (difference 3 163)",
+        "electricity.billing_period": "p2: consumption lines 'du 01/12/2016 au 31/12/2016' and 'du 01/01/2017 au 29/01/2017'; taxes 'Contribution au Service Public de l'Electricité du 01/12/2016 au 29/01/2017 3 163 kWh'"
+      },
+      "notes": "Bill guide: the right-hand numbered explanations are callouts, not bill values; only the embedded bill was labelled. Period = consumption period 01/12/2016-29/01/2017 (both consumption lines and all kWh-based taxes use it). The fixed subscription line 'Abonnement du 01/12/2016 au 28/02/2017' runs to 28/02/2017 because it is billed in advance; it is not consumption, so end = 2017-01-29 (a grader could reasonably accept 2017-01-30 = closing index read date, or 2017-02-28 = subscription end, as near-misses). The '3163 Estimé' bar in the 12-month chart is the same figure. Network operator Enedis appears only as the outage contact."
+    },
+    "07_it_it_electricity_enel-energia.pdf": {
+      "language": "it",
+      "vendor_name": [
+        "Enel"
+      ],
+      "invoice_date": "2024-09-09",
+      "service_address": "VIA TANARO 35 00040 ARDEA RM",
+      "services": [
+        {
+          "utility_type": "electricity",
+          "usage_amount": 327,
+          "usage_unit": "kWh",
+          "billing_period_start": "2024-07-01",
+          "billing_period_end": "2024-08-31"
+        }
+      ],
+      "evidence": {
+        "vendor_name": "p1 logo block: 'Enel Energia - Mercato libero dell'energia Casella Postale 8080 - 85100 Potenza'; p1 footer: 'Enel Energia S.p.A. - Società con unico socio Enel Italia S.p.A'",
+        "invoice_date": "p1: 'Bolletta sintetica riferita alla fattura elettronica n. 5070881145 del 09/09/2024 valida ai fini fiscali.' (due date is separate: 'Quando scade? 24/09/2024')",
+        "service_address": "p2 Scontrino dell'energia header: 'INDIRIZZO DI FORNITURA: VIA TANARO 35 00040 ARDEA RM' (the p1 address 'VALERIO FELICE C/O VALERIO FELICE VIA MARIA GARIBALDI 120, 00160, ROMA' is the mailing address)",
+        "electricity.usage_amount": "p3 'Consumo rilevato (dal 01/07/2024 al 31/08/2024)': 'F1 108 kWh  F2 87 kWh  F3 132 kWh  Totale energia 327 kWh' (108+87+132=327); same figure p1 'Quanto ho consumato? 327 kWh consumi rilevati nel periodo oggetto di fatturazione' and p2 'Quota consumi 327 kWh'",
+        "electricity.usage_unit": "p1/p3: '327 kWh'",
+        "electricity.billing_period_start": "p3: 'Consumo rilevato (dal 01/07/2024 al 31/08/2024)'; p1: 'Periodo LUG. 2024 - AGO. 2024 - spesa per l'ENERGIA ELETTRICA'",
+        "electricity.billing_period_end": "p3: 'Consumo rilevato (dal 01/07/2024 al 31/08/2024)'; p2 price box: 'Valori applicati nel periodo 01/07/2024 - 31/07/2024' and '01/08/2024 - 31/08/2024'; readings p3 '30/06/2024 ... 31/08/2024 rilevata'"
+      },
+      "notes": "Specimen has template inconsistencies; labels follow the majority of the bill. (1) p3 box 'Consumo fatturato (dal 01/01/2025 al 28/02/2025)' contradicts the p1 period (LUG-AGO 2024), the p3 'Consumo rilevato' dates, the p2 PUN periods and the 09/09/2024 issue date (a bill cannot cover 2025 months); treated as a template error, period = 2024-07-01..2024-08-31. (2) p3 'Consumo annuo (dal 01/07/2024 al 31/08/2024)' 2.787 kWh is the 12-month annual figure (p1 says 'dal 01/09/2023 al 31/08/2024'), not period usage. (3) p4 'Dettaglio fiscale' totals (140,07 / 163,87 EUR) and excise lines 'su kWh 47' + 'su kWh 67' do not match p1/p2; irrelevant to labelled fields, and the 47/67 kWh excise bands are not consumption. Vendor alias 'Enel' rejects the distributor 'E-Distribuzione'. Address copied as printed (no commas on the bill)."
+    },
+    "08_br_pt_electricity_enel-ceara.pdf": {
+      "language": "pt",
+      "vendor_name": [
+        "Enel",
+        "Companhia Energetica do Ceara"
+      ],
+      "invoice_date": "2018-08-09",
+      "service_address": null,
+      "services": [
+        {
+          "utility_type": "electricity",
+          "usage_amount": 151229,
+          "usage_unit": "kWh",
+          "billing_period_start": "2018-07-05",
+          "billing_period_end": "2018-08-06"
+        }
+      ],
+      "evidence": {
+        "vendor_name": "p3 visible bill header (callout 01): enel logo + 'Companhia Energética do Ceará Rua Padre Valdevino, 150 CEP 60135 040 | Fortaleza CE CNPJ 07.047.251/0001-70 CGF 06.105.848-3 www.eneldistribuicao.com.br'; p9 visible: 'App Enel Ceará'",
+        "invoice_date": "p3 visible DATAS box (callout 04): 'Emissão 09/08/2018' (label is in the raster image, value '09/08/2018' is in the text layer); 'Esta é a sua fatura de 08/2018'",
+        "service_address": "null: p3 visible 'DADOS DO CLIENTE' block has 'DESTINATÁRIO' and 'TITULAR' printed with no name or address under them; the only address visible is the utility's own ('Rua Padre Valdevino, 150 CEP 60135 040 | Fortaleza CE')",
+        "electricity.usage_amount": "p3 visible VALORES DE FATURAMENTO: 'Consumo Fora Ponta 136.322,000 0,39416 53.732,48' + 'Consumo Ponta 14.907,000 1,75455 26.155,10' = 151.229 kWh; GRANDEZAS MEDIDAS 'CONSUMO EM kWh' Total Medido: 'HFP/Único 136322.00  Hora Ponta 14907.00  Reservado 0.00'; histórico 'AGO 2018 ... 14907.00 136322.00'. Excluded: 'Demanda Ativa 1.500,000' (kW), reactive UFER/DMCR columns",
+        "electricity.usage_unit": "p3 visible: 'CONSUMO EM kWh'",
+        "electricity.billing_period_start": "p3 visible DATAS box: 'Leitura Anterior 05/07/2018'",
+        "electricity.billing_period_end": "p3 visible DATAS box: 'Leitura Atual 06/08/2018', 'Período Fornecido 32 Dias' (05/07 to 06/08 = 32 days)"
+      },
+      "notes": "WARNING, two different bills on PDF page 3. The VISIBLE bill (what renders/prints) is an Enel Ceará (Companhia Energética do Ceará) Grupo A bill for 08/2018; labels follow it. Underneath it, fully hidden by a white rectangle plus two raster images (verified from PyMuPDF draw order; removing the image does not reveal it either), the TEXT LAYER also contains an older Enel Goiás bill (CNPJ 01.543.032/0001-04, 'Aplicativo Enel Goiás') with different values: 'EMISSÃO 07/07/2018', 'MÊS DE REFERÊNCIA 07/2018', 'DATA DA LEITURA ANTERIOR 04/06/2018' / 'ATUAL 04/07/2018' / 'NÚMERO DE DIAS 30', 'CONSUMO P 27,3' + 'CONSUMO FP 10332' + 'CONSUMO HR 19670,16' = 30029.46 kWh, address 'ZONA RURAL CEP: 00.000-000 CIDADE GO BRASIL'. A text-only extractor sees both interleaved and may legitimately return the hidden values (2018-07-07, 2018-06-04..2018-07-04, 30029.46 kWh). The source URL ('Entenda_sua_conta_ce_grandesclientes.pdf', 'ce' = Ceará) and p9 'App Enel Ceará' confirm the visible bill is the intended one, so SOURCES.md / the filename ('enel-goias', 'reference month 07/2018') describe the hidden layer, not the printed bill. Pages 4-8 are explanation pages, not repeats of the bill (their text layers duplicate the Goiás explanation text). Usage = Fora Ponta + Ponta (Reservado 0); demand kW and reactive energy excluded. Billing period from read dates (only read dates printed). | HIDDEN TEXT LAYER: under white rectangles the PDF text layer also holds an older Enel Goias bill (issued 07/07/2018, reads 04/06-04/07/2018). Labels follow the visible Enel Ceara bill, which is what a person sees."
+    },
+    "09_be_nl_electricity-gas_eneco.pdf": {
+      "language": "nl",
+      "vendor_name": [
+        "Eneco"
+      ],
+      "invoice_date": "2018-08-28",
+      "service_address": "Frank Craeybeckxlaan 555, 2100 DEURNE",
+      "services": [
+        {
+          "utility_type": "electricity",
+          "usage_amount": null,
+          "usage_unit": null,
+          "billing_period_start": "2017-09-26",
+          "billing_period_end": "2018-08-22"
+        },
+        {
+          "utility_type": "gas",
+          "usage_amount": null,
+          "usage_unit": null,
+          "billing_period_start": "2017-09-26",
+          "billing_period_end": "2018-08-22"
+        }
+      ],
+      "evidence": {
+        "vendor_name": "p1 embedded specimen: Eneco logo; footer 'Eneco Belgium nv - Battelsesteenweg 455i - BE - 2800 Mechelen - BTW BE 0683.948.879'",
+        "invoice_date": "p1 embedded specimen: 'Factuurdatum: 28/08/2018' (due date 'Uiterste betaaldatum: 15 september 2018' is not the invoice date)",
+        "service_address": "p1 embedded specimen: 'Verbruiksadres: Frank Craeybeckxlaan 555, 2100 DEURNE'",
+        "electricity.billing_period": "p1 embedded specimen: 'Elektriciteit 26/09/2017 - 22/08/2018 EAN 541448820000000000'",
+        "gas.billing_period": "p1 embedded specimen: 'Gas 26/09/2017 - 22/08/2018 EAN 541448820000000000'",
+        "electricity.usage_amount": "null: the specimen summary page prints only money ('Totaal verbruik € 864,51 excl. BTW € 1.037,36 incl. BTW'); 'Totaal verbruik' is a euro amount, not consumption. No kWh figure for this customer anywhere. p2 footnote '1.600 kWh dag / 1.900 kWh nacht voor de postcode 9000 (IMEWO)' is the basis of an indicative average cost split, not this customer's usage",
+        "gas.usage_amount": "null: no gas consumption printed for this customer; p2 footnote '23.260 kWh voor de postcode 9000 (IMEWO)' is an indicative example for the pie chart, not this customer's usage"
+      },
+      "notes": "Only page 1's embedded SPECIMEN is a bill; the surrounding text (numbered sections 1-3, 'Nieuw maandelijks voorschotbedrag', page 2 FAQ and charts) is explanatory. Usage is null for both fuels: the summary page shows costs only and the detail pages are not included in this PDF. Vendor is Eneco (Eneco Belgium nv), not IVERLEK (the network operator listed under 'Een technisch probleem?'). Service address is the 'Verbruiksadres' (identical to the customer postal address, minus 'BELGIË')."
+    },
+    "10_au_en_water_state-water-nsw.pdf": {
+      "language": "en",
+      "vendor_name": [
+        "Office of Water",
+        "State Water",
+        "Department of Primary Industries"
+      ],
+      "invoice_date": "2014-10-29",
+      "service_address": "99 Jones Street, SMITHVILLE NSW 2999",
+      "services": [
+        {
+          "utility_type": "water",
+          "usage_amount": 100,
+          "usage_unit": "ML",
+          "billing_period_start": "2013-07-01",
+          "billing_period_end": "2014-06-30"
+        }
+      ],
+      "evidence": {
+        "vendor_name": "p1 TAX INVOICE letterhead: 'NSW GOVERNMENT | Department of Primary Industries Office of Water', 'E-mail billing@statewater.com.au', 'ABN: 72 189 919 072'; p2: 'State Water Corporation is the billing and collection agency for water management charges levied by the Office of Water', '(State Water is the billing agent for The Office)'",
+        "invoice_date": "p1: 'Date: 29/10/2014'; key C: 'The date your invoice was issued' (due date separate: 'Payment Due Date: 29/11/2014')",
+        "service_address": "p1: 'Customer Account: J Citizen 99 Jones Street SMITHVILLE NSW 2999' (same in 'Invoice sent to:'); no property/supply address printed; licence line 'Category: Unregulated river, WAL: 999, Castlereagh River Above Binnaway Water Source' is a water source, not an address",
+        "water.usage_amount": "p1: 'Unreg water usage charge 100.00 $2.52/Megalitre $252.00' with 'Calculated by multiplying the number of megalitres (QTY) of water you used by the usage charge determined by IPART'. Excluded: 'Unreg access (entitlement) charge: 2 150.00 $5.87/Megalitre $880.50' ('the quantity (QTY) of water you are entitled to') and 'User owned meter read/assessment charge 1.00 $212.90 Each'",
+        "water.usage_unit": "p1: '$2.52/Megalitre', 'the number of megalitres (QTY) of water you used'",
+        "water.billing_period_start": "p1: 'Period of Invoice: 1/07/2013 to: 30/06/2014'; usage line 'Period: 01/07/2013 to 30/06/2014'",
+        "water.billing_period_end": "p1: 'Period of Invoice: 1/07/2013 to: 30/06/2014'; key C: 'You are billed for water management charges accrued in the previous financial year'"
+      },
+      "notes": "Usage = 100 ML: the bill has a separate metered/assessed usage charge with a volume ('megalitres ... of water you used'), distinct from the 150 ML entitlement (access) charge and the 1-unit meter-read charge, so the usage line wins and entitlement is not usage. Unit as printed is 'Megalitre' (canonical 'ML'); if the pipeline converts water to m3 the equivalent is 100000 m3. Vendor: charges are levied by the NSW Office of Water (letterhead, ABN) and billed/collected by State Water Corporation as agent; both accepted, plus 'Department of Primary Industries' from the letterhead; IPART (regulator) is not the vendor. Service address: no supply/property address on a water access licence bill; the only customer address printed (account + mailing, identical) is used per the fallback rule; the WAL water source 'Castlereagh River Above Binnaway Water Source' is an alternative reading but is not an address. Text layer repeats each glyph ~13x (overprint); de-duplicated it matches the visible bill exactly, no conflicting values."
+    }
+  }
+}

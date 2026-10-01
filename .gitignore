@@ -1,0 +1,14 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.vercel/
+node_modules/
+.agents/
+.claude/
+skills-lock.json
+# built by web/build.py
+web/public/invoices/
+web/public/data.json
+web/public/invoices.csv

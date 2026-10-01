@@ -1,0 +1,146 @@
+{
+  "field_accuracy": 0.9667,
+  "fields_correct": 116,
+  "fields_total": 120,
+  "per_field": {
+    "vendor_name": {
+      "correct": 15,
+      "total": 15,
+      "accuracy": 1.0
+    },
+    "invoice_date": {
+      "correct": 14,
+      "total": 15,
+      "accuracy": 0.9333
+    },
+    "service_address": {
+      "correct": 15,
+      "total": 15,
+      "accuracy": 1.0
+    },
+    "utility_type": {
+      "correct": 15,
+      "total": 15,
+      "accuracy": 1.0
+    },
+    "usage_amount": {
+      "correct": 14,
+      "total": 15,
+      "accuracy": 0.9333
+    },
+    "usage_unit": {
+      "correct": 15,
+      "total": 15,
+      "accuracy": 1.0
+    },
+    "billing_period_start": {
+      "correct": 14,
+      "total": 15,
+      "accuracy": 0.9333
+    },
+    "billing_period_end": {
+      "correct": 14,
+      "total": 15,
+      "accuracy": 0.9333
+    }
+  },
+  "invoices": [
+    {
+      "file": "01_us_en_electricity-gas_sdge.pdf",
+      "language": "en",
+      "correct": 16,
+      "total": 16
+    },
+    {
+      "file": "02_us_en_gas_peoples-gas.pdf",
+      "language": "en",
+      "correct": 8,
+      "total": 8
+    },
+    {
+      "file": "03_gb_en_electricity-gas_octopus-energy.pdf",
+      "language": "en",
+      "correct": 16,
+      "total": 16
+    },
+    {
+      "file": "04_gb_en_water_affinity-water.pdf",
+      "language": "en",
+      "correct": 8,
+      "total": 8
+    },
+    {
+      "file": "05_de_de_electricity-gas-water_mindener-stadtwerke.pdf",
+      "language": "de",
+      "correct": 24,
+      "total": 24
+    },
+    {
+      "file": "06_fr_fr_electricity_edf-entreprises.pdf",
+      "language": "fr",
+      "correct": 8,
+      "total": 8
+    },
+    {
+      "file": "07_it_it_electricity_enel-energia.pdf",
+      "language": "it",
+      "correct": 8,
+      "total": 8
+    },
+    {
+      "file": "08_br_pt_electricity_enel-ceara.pdf",
+      "language": "pt",
+      "correct": 5,
+      "total": 8
+    },
+    {
+      "file": "09_be_nl_electricity-gas_eneco.pdf",
+      "language": "nl",
+      "correct": 16,
+      "total": 16
+    },
+    {
+      "file": "10_au_en_water_state-water-nsw.pdf",
+      "language": "en",
+      "correct": 7,
+      "total": 8
+    }
+  ],
+  "misses": [
+    {
+      "file": "08_br_pt_electricity_enel-ceara.pdf",
+      "utility": "electricity",
+      "field": "invoice_date",
+      "expected": "2018-08-09",
+      "got": "2018-07-07",
+      "flagged": false
+    },
+    {
+      "file": "08_br_pt_electricity_enel-ceara.pdf",
+      "utility": "electricity",
+      "field": "billing_period_start",
+      "expected": "2018-07-05",
+      "got": "2018-06-04",
+      "flagged": false
+    },
+    {
+      "file": "08_br_pt_electricity_enel-ceara.pdf",
+      "utility": "electricity",
+      "field": "billing_period_end",
+      "expected": "2018-08-06",
+      "got": "2018-07-04",
+      "flagged": false
+    },
+    {
+      "file": "10_au_en_water_state-water-nsw.pdf",
+      "utility": "water",
+      "field": "usage_amount",
+      "expected": 100,
+      "got": 250.0,
+      "flagged": true
+    }
+  ],
+  "extra_rows": [],
+  "errors_caught_by_review_flag": "1/4",
+  "flagged_rows_that_had_an_error": "1/3"
+}

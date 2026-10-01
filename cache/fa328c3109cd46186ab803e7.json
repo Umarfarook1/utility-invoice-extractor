@@ -1,0 +1,66 @@
+{
+  "label": "08_br_pt_electricity_enel-ceara.pdf",
+  "model": "gemini-3.5-flash",
+  "prompt_version": "2026-10-01.3",
+  "input_tokens": 17718,
+  "output_tokens": 12302,
+  "latency_s": 201.31,
+  "extraction": {
+    "is_utility_invoice": true,
+    "document_language": "pt",
+    "country": "BR",
+    "vendor_name": {
+      "value": "Companhia Energética do Ceará",
+      "source_text": "Companhia Energética do Ceará",
+      "page": 3
+    },
+    "vendor_name_latin": null,
+    "invoice_number": {
+      "value": "862754",
+      "source_text": "862754",
+      "page": 3
+    },
+    "invoice_date": {
+      "value": "2018-07-07",
+      "source_text": "07/07/2018",
+      "page": 3
+    },
+    "service_address": {
+      "value": null,
+      "source_text": null,
+      "page": null
+    },
+    "currency": "BRL",
+    "total_amount": {
+      "value": 20945.67,
+      "source_text": "20.945,67",
+      "page": 3
+    },
+    "services": [
+      {
+        "utility_type": "electricity",
+        "usage": {
+          "value": 151229.0,
+          "source_text": "Consumo Fora Ponta 136.322,000 Consumo Ponta 14.907,000",
+          "page": 3
+        },
+        "usage_unit": "kWh",
+        "billing_period_start": {
+          "value": "2018-06-04",
+          "source_text": "04/06/2018",
+          "page": 3
+        },
+        "billing_period_end": {
+          "value": "2018-07-04",
+          "source_text": "04/07/2018",
+          "page": 3
+        },
+        "meter_reading_start": null,
+        "meter_reading_end": null
+      }
+    ],
+    "notes": [
+      "This is a specimen/sample bill used as an explanatory guide (Entenda a sua conta) with placeholder customer data. The active electricity usage is computed as the sum of Consumo Fora Ponta (136,322.000 kWh) and Consumo Ponta (14,907.000 kWh)."
+    ]
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "label": "10_au_en_water_state-water-nsw.pdf",
+  "model": "gemini-3.5-flash-lite",
+  "prompt_version": "2026-10-01.3",
+  "input_tokens": 27512,
+  "output_tokens": 568,
+  "latency_s": 2.73,
+  "extraction": {
+    "is_utility_invoice": true,
+    "document_language": "en",
+    "country": "AU",
+    "vendor_name": {
+      "value": "State Water Corporation",
+      "source_text": "State Water Corporation",
+      "page": 2
+    },
+    "vendor_name_latin": null,
+    "invoice_number": {
+      "value": "0999999999",
+      "source_text": "Invoice No: 0999999999",
+      "page": 1
+    },
+    "invoice_date": {
+      "value": "2014-10-29",
+      "source_text": "Date : 29/10/2014",
+      "page": 1
+    },
+    "service_address": {
+      "value": "99 Jones Street SMITHVILLE NSW 2999",
+      "source_text": "99 Jones Street SMITHVILLE NSW 2999",
+      "page": 1
+    },
+    "currency": "AUD",
+    "total_amount": {
+      "value": 1343.05,
+      "source_text": "$1343.05",
+      "page": 1
+    },
+    "services": [
+      {
+        "utility_type": "water",
+        "usage": {
+          "value": 250.0,
+          "source_text": "2150.00 / 100.00",
+          "page": 1
+        },
+        "usage_unit": "Megalitres",
+        "billing_period_start": {
+          "value": "2013-07-01",
+          "source_text": "01/07/2013",
+          "page": 1
+        },
+        "billing_period_end": {
+          "value": "2014-06-30",
+          "source_text": "30/06/2014",
+          "page": 1
+        },
+        "meter_reading_start": null,
+        "meter_reading_end": null
+      }
+    ],
+    "notes": [
+      "This is a sample water bill issued by State Water Corporation on behalf of the NSW Office of Water."
+    ]
+  }
+}

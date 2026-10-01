@@ -1,0 +1,7 @@
+google-genai>=1.30
+openai>=1.99
+pydantic>=2.7
+pypdf>=5.0
+python-dotenv>=1.0
+langdetect>=1.0.9
+pytest>=8.0

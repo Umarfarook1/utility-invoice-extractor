@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Invoice Ledger</title>
+<meta name="description" content="Multilingual utility invoice extraction with an LLM, where every value is traced to the text it was read from.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' rx='3' fill='none' stroke='%231d2433' stroke-width='3'/%3E%3Crect x='8' y='13' width='16' height='7' fill='%23f2c94c'/%3E%3C/svg%3E">
+<style>
+:root {
+  --paper: oklch(0.985 0.002 250);
+  --panel: oklch(0.965 0.004 250);
+  --sunk: oklch(0.945 0.005 250);
+  --ink: oklch(0.23 0.015 260);
+  --ink-2: oklch(0.43 0.015 260);
+  --ink-3: oklch(0.56 0.012 260);
+  --rule: oklch(0.87 0.006 260);
+  --rule-soft: oklch(0.92 0.005 260);
+  --pen: oklch(0.47 0.16 258);
+  --pen-weak: oklch(0.93 0.035 258);
+  --mark: oklch(0.94 0.11 100);
+  --mark-hot: oklch(0.86 0.17 92);
+  --ok: oklch(0.52 0.12 155);
+  --ok-weak: oklch(0.94 0.04 155);
+  --warn: oklch(0.6 0.14 65);
+  --warn-weak: oklch(0.95 0.05 80);
+  --bad: oklch(0.54 0.19 27);
+  --bad-weak: oklch(0.95 0.03 27);
+  --display: "Cabinet Grotesk", "Segoe UI", sans-serif;
+  --sans: "Satoshi", "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --s-1: 0.8rem; --s0: 1rem; --s1: 1.25rem; --s2: 1.563rem; --s3: 1.953rem; --s4: 2.441rem; --s5: 3.052rem;
+  --r1: 3px; --r2: 8px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: oklch(0.19 0.01 260); --panel: oklch(0.225 0.012 260); --sunk: oklch(0.17 0.01 260);
+    --ink: oklch(0.93 0.008 260); --ink-2: oklch(0.78 0.01 260); --ink-3: oklch(0.64 0.012 260);
+    --rule: oklch(0.34 0.012 260); --rule-soft: oklch(0.28 0.012 260);
+    --pen: oklch(0.74 0.12 255); --pen-weak: oklch(0.3 0.05 258);
+    --mark: oklch(0.42 0.08 95); --mark-hot: oklch(0.58 0.13 92);
+    --ok: oklch(0.74 0.12 155); --ok-weak: oklch(0.3 0.05 155);
+    --warn: oklch(0.78 0.12 75); --warn-weak: oklch(0.32 0.05 75);
+    --bad: oklch(0.72 0.15 27); --bad-weak: oklch(0.32 0.06 27);
+  }
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: var(--s0); line-height: 1.55; }
+a { color: var(--pen); text-underline-offset: 0.18em; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--pen); outline-offset: 2px; border-radius: var(--r1); }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+.mono, code, pre { font-family: var(--mono); font-size: 0.86em; }
+.num { font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 0 clamp(16px, 3vw, 40px); }
+
+/* top bar */
+.top { border-bottom: 1px solid var(--rule); }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; flex-wrap: wrap; }
+.brand { font-family: var(--display); font-weight: 800; font-size: 1.15rem; display: flex; align-items: center; gap: 10px; }
+.brand-mark { width: 18px; height: 18px; border: 2px solid var(--ink); border-radius: 2px; position: relative; }
+.brand-mark::after { content: ""; position: absolute; left: 2px; right: 2px; top: 6px; height: 5px; background: var(--mark-hot); }
+.top nav { display: flex; gap: 20px; flex-wrap: wrap; font-size: var(--s-1); }
+.top nav a { color: var(--ink-2); text-decoration: none; padding: 6px 0; }
+.top nav a:hover { color: var(--ink); }
+
+/* intro */
+.intro { padding: clamp(40px, 7vw, 88px) 0 clamp(32px, 5vw, 56px); }
+.intro .wrap { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 1fr); gap: clamp(32px, 6vw, 96px); align-items: end; }
+.intro h1 { font-size: clamp(2.2rem, 4.2vw, 3.7rem); font-weight: 800; letter-spacing: -0.03em; max-width: 21ch; line-height: 1.04; }
+.byline { margin: 26px 0 0; font-size: 0.92rem; color: var(--ink-3); max-width: 60ch; }
+.byline strong { color: var(--ink-2); font-weight: 500; }
+.intro h1 mark { background: linear-gradient(transparent 58%, var(--mark-hot) 58%, var(--mark-hot) 92%, transparent 92%); color: inherit; padding: 0 0.05em; }
+.lede { font-size: 1.2rem; color: var(--ink-2); max-width: 46ch; margin: 22px 0 0; line-height: 1.5; text-wrap: pretty; }
+.ledger { margin: 0; border-top: 2px solid var(--ink); }
+.ledger div { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--rule); }
+.ledger dt { color: var(--ink-2); font-size: var(--s-1); }
+.ledger dd { margin: 0; font-family: var(--display); font-weight: 700; font-size: 1.5rem; font-variant-numeric: lining-nums tabular-nums; text-align: right; }
+.ledger dd.words { font-family: var(--sans); font-size: 0.98rem; font-weight: 500; }
+.ledger dd small { display: block; font-family: var(--sans); font-size: 0.74rem; color: var(--ink-3); font-weight: 400; }
+
+/* sections */
+section.block { padding: clamp(48px, 7vw, 96px) 0; border-top: 1px solid var(--rule); }
+.sec-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px 40px; align-items: end; margin-bottom: 28px; }
+.sec-head h2 { font-size: clamp(1.9rem, 3.2vw, 2.8rem); max-width: 24ch; }
+.sec-head p { margin: 10px 0 0; color: var(--ink-2); max-width: 62ch; }
+
+
+.btn { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border-radius: var(--r1); border: 1px solid var(--rule); background: var(--paper); color: var(--ink); font: 500 var(--s-1)/1 var(--sans); text-decoration: none; cursor: pointer; transition: background 160ms var(--ease), border-color 160ms var(--ease); }
+.btn:hover { background: var(--panel); border-color: var(--ink-3); text-decoration: none; }
+.btn:active { background: var(--sunk); }
+.btn.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.btn.primary:hover { background: oklch(from var(--ink) calc(l + 0.08) c h); }
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* explorer */
+.explorer { display: grid; grid-template-columns: 250px minmax(0, 1fr) minmax(320px, 400px); border: 1px solid var(--rule); border-radius: var(--r2); background: var(--paper); overflow: hidden; min-height: 680px; }
+.inv-list { border-right: 1px solid var(--rule); background: var(--panel); overflow-y: auto; max-height: 820px; }
+.inv-list h3, .pane-head { font: 500 0.82rem/1 var(--sans); color: var(--ink-3); padding: 15px 16px; margin: 0; border-bottom: 1px solid var(--rule); letter-spacing: 0; }
+.inv-btn { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; width: 100%; text-align: left; padding: 12px 16px; border: 0; border-bottom: 1px solid var(--rule-soft); background: transparent; color: var(--ink); font: inherit; cursor: pointer; transition: background 140ms var(--ease); }
+.inv-btn:hover { background: var(--sunk); }
+.inv-btn[aria-current="true"] { background: var(--ink); color: var(--paper); }
+.inv-btn[aria-current="true"] .meta { color: oklch(from var(--paper) l c h / 0.72); }
+.inv-btn[aria-current="true"] .conf-pill { background: oklch(from var(--paper) l c h / 0.14); color: var(--paper); }
+.inv-btn .v { font-weight: 500; font-size: 0.96rem; line-height: 1.3; }
+.inv-btn .meta { grid-column: 1 / -1; font-size: 0.78rem; color: var(--ink-3); }
+.conf-pill { font-family: var(--mono); font-size: 0.72rem; align-self: start; padding: 2px 6px; border-radius: var(--r1); }
+.conf-pill.hi { background: var(--ok-weak); color: var(--ok); }
+.conf-pill.lo { background: var(--warn-weak); color: var(--warn); }
+
+.doc { display: flex; flex-direction: column; min-width: 0; border-right: 1px solid var(--rule); }
+.doc-tabs { display: flex; border-bottom: 1px solid var(--rule); align-items: stretch; }
+.tab { border: 0; background: transparent; padding: 13px 16px; font: 500 var(--s-1)/1 var(--sans); color: var(--ink-2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+.doc-tabs .spacer { flex: 1; }
+.doc-tabs .src { font-size: var(--s-1); padding: 13px 16px; }
+.doc-body { flex: 1; overflow: auto; max-height: 772px; background: var(--paper); }
+.page { padding: 18px 20px 26px; border-bottom: 1px dashed var(--rule); }
+.page-no { font: 500 0.78rem/1 var(--sans); color: var(--ink-3); margin-bottom: 10px; }
+.page pre { margin: 0; white-space: pre-wrap; word-break: break-word; font-size: 0.74rem; line-height: 1.55; color: var(--ink-2); }
+.page mark { background: var(--mark); color: var(--ink); border-radius: 2px; transition: background 160ms var(--ease), box-shadow 160ms var(--ease); }
+.page mark.hot { background: var(--mark-hot); box-shadow: 0 0 0 2px var(--mark-hot); }
+.pdf-frame { width: 100%; height: 772px; border: 0; display: block; background: var(--sunk); }
+
+.fields { overflow-y: auto; max-height: 820px; background: var(--paper); }
+.svc-tabs { display: flex; gap: 6px; padding: 12px 16px; border-bottom: 1px solid var(--rule); flex-wrap: wrap; }
+.svc-tab { border: 1px solid var(--rule); background: var(--paper); border-radius: 999px; padding: 6px 12px; font: 500 0.78rem/1 var(--sans); color: var(--ink-2); cursor: pointer; }
+.svc-tab[aria-selected="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.group-label { font: 600 1rem/1.2 var(--display); color: var(--ink); padding: 18px 16px 6px; }
+.field { padding: 10px 16px 12px; border-bottom: 1px solid var(--rule-soft); cursor: default; transition: background 140ms var(--ease); }
+.field:hover, .field:focus-within, .field.hot { background: var(--panel); }
+.field[tabindex] { outline-offset: -2px; }
+.f-top { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.f-name { font-size: 0.78rem; color: var(--ink-3); }
+.f-conf { font: 500 0.72rem/1 var(--mono); }
+.f-value { font-family: var(--mono); font-weight: 500; font-size: 0.9rem; margin-top: 3px; word-break: break-word; }
+.f-value.null { font-family: var(--sans); color: var(--ink-3); font-weight: 400; }
+.f-std { font-family: var(--mono); font-size: 0.74rem; color: var(--ink-2); font-weight: 400; }
+.f-quote { font-family: var(--mono); font-size: 0.74rem; color: var(--ink-2); margin-top: 4px; }
+.f-quote q { background: var(--mark); color: var(--ink); quotes: "\201C" "\201D"; padding: 0 2px; border-radius: 2px; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 7px; }
+.chip { font: 500 0.74rem/1 var(--sans); padding: 4px 7px; border-radius: var(--r1); display: inline-flex; gap: 4px; align-items: center; }
+.chip.ok { background: var(--ok-weak); color: var(--ok); }
+.chip.warn { background: var(--warn-weak); color: var(--warn); }
+.chip.bad { background: var(--bad-weak); color: var(--bad); }
+.chip.na { background: var(--sunk); color: var(--ink-3); }
+.bar { height: 2px; margin-top: 8px; }
+.bar i { display: block; height: 100%; background: var(--ok); }
+.bar i.mid { background: var(--warn); }
+.bar i.low { background: var(--bad); }
+.notes { padding: 14px 16px 18px; font-size: 0.8rem; color: var(--ink-2); }
+.notes ul { margin: 6px 0 0; padding-left: 18px; }
+.review { margin: 12px 16px 0; padding: 10px 12px; border-radius: var(--r1); font-size: 0.8rem; }
+.review.ok { background: var(--ok-weak); color: var(--ok); }
+.review.flag { background: var(--warn-weak); color: var(--warn); }
+.review code { font-size: 0.72rem; word-break: break-word; }
+.hint { font-size: var(--s-1); color: var(--ink-3); margin-top: 12px; }
+
+/* pipeline */
+.flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border-top: 2px solid var(--ink); counter-reset: step; }
+.flow li { padding: 18px 18px 22px 0; border-right: 1px solid var(--rule); counter-increment: step; }
+.flow li + li { padding-left: 18px; }
+.flow li:last-child { border-right: 0; }
+.flow li + li::before { content: "\2192"; position: absolute; left: -9px; top: 18px; width: 18px; text-align: center; background: var(--paper); color: var(--ink-3); font: 500 0.9rem/1 var(--sans); }
+.flow li { position: relative; }
+.flow h3 { font-size: 1.2rem; margin-bottom: 8px; }
+.flow p { margin: 0 0 10px; font-size: 0.86rem; color: var(--ink-2); }
+.flow code { color: var(--ink-3); font-size: 0.72rem; }
+.flow li.llm { background: linear-gradient(var(--mark), var(--mark)) 0 0 / 100% 4px no-repeat; }
+
+.principles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 56px; margin-top: 56px; }
+.principle { padding: 22px 0; border-top: 1px solid var(--rule); }
+.principle h3 { font-size: 1.35rem; margin-bottom: 8px; }
+.principle p { margin: 0; color: var(--ink-2); }
+
+/* tables */
+.table-scroll { overflow-x: auto; border-top: 2px solid var(--ink); }
+table { border-collapse: collapse; width: 100%; font-size: 0.86rem; }
+th { text-align: left; font: 500 0.82rem/1.2 var(--sans); color: var(--ink-3); padding: 12px 14px 10px 0; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+td { padding: 11px 14px 11px 0; border-bottom: 1px solid var(--rule-soft); vertical-align: top; }
+td.r, th.r { text-align: right; }
+td .q { font-family: var(--mono); font-size: 0.78rem; background: var(--mark); padding: 1px 4px; border-radius: 2px; }
+td .arrow { color: var(--ink-3); }
+
+/* eval */
+.eval-grid { display: grid; grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr); gap: clamp(32px, 6vw, 80px); }
+.big { font: 600 clamp(3.4rem, 8vw, 6rem)/1 var(--display); letter-spacing: -0.03em; font-variant-numeric: lining-nums tabular-nums; }
+.big-label { color: var(--ink-2); margin-top: 10px; max-width: 34ch; }
+.stat-list { margin: 28px 0 0; border-top: 1px solid var(--rule); }
+.stat-list div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--rule-soft); font-size: 0.9rem; }
+.stat-list dd { margin: 0; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.fbars { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ink); }
+.fbars li { display: grid; grid-template-columns: 180px minmax(0, 1fr) 72px; gap: 14px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--rule-soft); font-size: 0.88rem; }
+.fbars .track { height: 6px; }
+.fbars .fill { height: 100%; background: var(--ink); border-radius: 1px; }
+.fbars .pct { font-family: var(--mono); text-align: right; font-variant-numeric: tabular-nums; }
+.misses { margin-top: 40px; }
+.finding { margin-top: 56px; padding: 24px 28px 26px; background: var(--panel); border-top: 2px solid var(--ink); display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 8px 48px; }
+.finding h3 { font-size: 1.6rem; grid-row: span 2; }
+.finding p { margin: 0 0 10px; color: var(--ink-2); max-width: 68ch; }
+@media (max-width: 760px) { .finding { grid-template-columns: 1fr; } }
+.misses h3 { font-size: 1.4rem; margin-bottom: 14px; }
+
+.cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 56px; }
+.cols ul { margin: 0; padding: 0; list-style: none; border-top: 2px solid var(--ink); }
+.cols li { padding: 14px 0; border-bottom: 1px solid var(--rule-soft); color: var(--ink-2); }
+.cols li strong { color: var(--ink); font-weight: 600; }
+.cols h3 { font-size: 1.4rem; margin-bottom: 14px; }
+
+footer { border-top: 1px solid var(--rule); padding: 32px 0 48px; color: var(--ink-3); font-size: var(--s-1); }
+footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+.loading { padding: 40px; color: var(--ink-3); font-family: var(--mono); font-size: var(--s-1); }
+
+@media (max-width: 1080px) {
+  .explorer { grid-template-columns: 220px minmax(0, 1fr); }
+  .fields { grid-column: 1 / -1; border-top: 1px solid var(--rule); max-height: none; }
+  .flow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .flow li:nth-child(3) { border-right: 0; }
+  .flow li:nth-child(n+4) { border-top: 1px solid var(--rule); }
+  .flow li:nth-child(4) { padding-left: 0; }
+}
+@media (max-width: 760px) {
+  .intro .wrap, .eval-grid, .principles, .cols, .sec-head { grid-template-columns: 1fr; }
+  .explorer { grid-template-columns: 1fr; }
+  .inv-list { max-height: 260px; border-right: 0; border-bottom: 1px solid var(--rule); }
+  .doc { border-right: 0; }
+  .doc-body, .pdf-frame { max-height: 460px; height: 460px; }
+  .flow { grid-template-columns: 1fr; }
+  .flow li, .flow li + li { padding: 16px 0; border-right: 0; border-top: 1px solid var(--rule); }
+  .fbars li { grid-template-columns: 120px minmax(0, 1fr) 56px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><span class="brand-mark" aria-hidden="true"></span>Invoice Ledger</div>
+    <nav aria-label="Primary">
+      <a href="#results">Results</a>
+      <a href="#how">How it works</a>
+      <a href="#languages">Languages</a>
+      <a href="#evaluation">Evaluation</a>
+      <a href="#tradeoffs">Trade-offs</a>
+      <a href="https://github.com/Umarfarook1/utility-invoice-extractor" data-repo>Code</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="intro">
+  <div class="wrap">
+    <div>
+      <h1>Every value <mark>traced back</mark> to the line it came from.</h1>
+      <p class="lede">Ten real utility bills in six languages. An LLM extracts the data; plain code checks every value against its source.</p>
+      <p class="byline"><strong>Utility invoice extraction with LLMs.</strong> A take-home for Pulsora's Forward Deployed Engineer role, by Umarfarook. 1 October 2026.</p>
+      <div class="btn-row" style="margin-top:28px">
+        <a class="btn primary" href="#results">Inspect the results</a>
+        <a class="btn" href="invoices.csv" download>Download CSV</a>
+        <a class="btn" href="https://github.com/Umarfarook1/utility-invoice-extractor" data-repo>Read the code</a>
+      </div>
+    </div>
+    <dl class="ledger" aria-label="Run summary">
+      <div><dt>Real invoices</dt><dd data-stat="invoices">-</dd></div>
+      <div><dt>Languages / countries</dt><dd data-stat="lang-countries">-</dd></div>
+      <div><dt>Utility types</dt><dd class="words" data-stat="utilities">-</dd></div>
+      <div><dt>CSV rows (one per service)</dt><dd data-stat="rows">-</dd></div>
+      <div><dt>Field accuracy vs hand labels</dt><dd data-stat="accuracy">-</dd></div>
+      <div><dt>Misses, of 120 labelled fields</dt><dd data-stat="misses">-</dd></div>
+      <div><dt>LLM calls per invoice</dt><dd data-stat="cost">-</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="block" id="results">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <h2>Every value, traced to the line it was read from</h2>
+        <p>Pick an invoice, then hover or focus a field: its quote lights up in the text the model was given, in the original language. Chips show which independent checks the value passed.</p>
+      </div>
+      <div class="btn-row">
+        <a class="btn" href="invoices.csv" download>invoices.csv</a>
+        <a class="btn" href="data.json">data.json</a>
+      </div>
+    </div>
+    <div class="explorer" id="explorer">
+      <nav class="inv-list" aria-label="Invoices"><h3>Invoices</h3><div id="inv-buttons"><p class="loading">Loading results…</p></div></nav>
+      <article class="doc" aria-label="Document">
+        <div class="doc-tabs" role="tablist">
+          <button class="tab" role="tab" aria-selected="true" data-view="text">Text the model read</button>
+          <button class="tab" role="tab" aria-selected="false" data-view="pdf">Original PDF</button>
+          <span class="spacer"></span>
+          <a class="src" id="src-link" target="_blank" rel="noopener">Source</a>
+        </div>
+        <div class="doc-body" id="doc-body"></div>
+      </article>
+      <aside class="fields" id="fields" aria-label="Extracted fields" aria-live="polite"></aside>
+    </div>
+    <p class="hint">Confidence is computed, never self-reported: it starts at 1.0 and drops when a quote is not in the document, when re-parsing the quote disagrees with the value, or when a validation rule fails.</p>
+  </div>
+</section>
+
+<section class="block" id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <h2>One LLM call per document, wrapped in checks that do not trust it</h2>
+        <p>The model does the part only a model can do: reading arbitrary layouts in any language. Everything that can be checked deterministically is checked by plain code.</p>
+      </div>
+    </div>
+    <ol class="flow">
+      <li><h3>Ingest</h3><p>PDF text layer, page by page. Layout mode keeps labels next to their values.</p><code>ingest.py</code></li>
+      <li><h3>Detect language</h3><p>Local detector as a free second opinion; the model reports its own.</p><code>language.py</code></li>
+      <li class="llm"><h3>Extract</h3><p>Strict JSON schema. Each field returns value, verbatim quote and page. A model ladder takes over on quota or overload.</p><code>llm.py · prompts.py</code></li>
+      <li><h3>Ground</h3><p>Is the quote really in the document? If not, the value is treated as invented.</p><code>verify.py</code></li>
+      <li><h3>Re-parse &amp; validate</h3><p>Locale-aware parsing of the quote must agree with the value. Business rules on periods, units, meter reads.</p><code>normalize.py · verify.py</code></li>
+      <li><h3>Score &amp; export</h3><p>Field confidence, review flag, CSV plus a JSONL audit trail.</p><code>pipeline.py · cli.py</code></li>
+    </ol>
+    <div class="principles">
+      <div class="principle"><h3>Quote, then verify</h3><p>Asking for the verbatim source text turns hallucination from invisible into detectable: a value whose quote is not in the document loses 60% of its confidence.</p></div>
+      <div class="principle"><h3>Extract in the original language</h3><p>No translate-first step. Translation adds cost and corrupts exactly the tokens that matter: dates, decimal separators, units, names.</p></div>
+      <div class="principle"><h3>Null beats a guess</h3><p>Missing fields come back empty and go to review. A plausible invented value silently corrupts an emissions inventory; an empty one gets fixed.</p></div>
+      <div class="principle"><h3>Cache by content</h3><p>Answers are keyed by model, prompt, schema and document text. Re-runs are free, and the repo replays the full run offline without an API key.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="languages">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <h2>Same pipeline, every locale</h2>
+        <p>What was printed on each bill, what the pipeline stored, and the locale rule the deterministic re-parse used to double-check the model.</p>
+      </div>
+    </div>
+    <div class="table-scroll"><table id="lang-table"><thead><tr><th>Invoice</th><th>Lang</th><th>Printed</th><th></th><th>Stored</th><th>Re-parse rule</th></tr></thead><tbody></tbody></table></div>
+  </div>
+</section>
+
+<section class="block" id="evaluation">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <h2>Measured against hand-labelled ground truth</h2>
+        <p>Every invoice was labelled by reading the original document. A missing field counts as correct only when the bill really does not print it, so abstaining is rewarded and inventing is punished.</p>
+      </div>
+    </div>
+    <div class="eval-grid">
+      <div>
+        <div class="big" id="acc-big">-</div>
+        <p class="big-label" id="acc-label">fields correct</p>
+        <dl class="stat-list" id="eval-stats"></dl>
+      </div>
+      <div>
+        <ul class="fbars" id="fbars"></ul>
+      </div>
+    </div>
+    <div class="finding">
+      <h3>The one failure the checks cannot see</h3>
+      <p>Invoice 08 is a single PDF that holds two bills. The visible page is an Enel Ceará bill issued on 9 August 2018. Hidden under white boxes, the text layer also carries an older Enel Goiás bill issued on 7 July 2018. The model read the text layer, so it returned the hidden bill's dates. Every quote it gave really is in that text layer, which is why grounding passed and the row was not flagged.</p>
+      <p>Text-layer checks cannot catch a text layer that disagrees with the rendered page. The fix is a render check: rasterize the page, OCR the regions the quotes came from, and flag any value whose quote is not visible. That is the first thing I would add before running this on customer documents.</p>
+    </div>
+    <div class="misses"><h3>Every miss, listed</h3><div class="table-scroll"><table id="miss-table"><thead><tr><th>Invoice</th><th>Field</th><th>Expected</th><th>Got</th><th>Flagged for review</th></tr></thead><tbody></tbody></table></div></div>
+  </div>
+</section>
+
+<section class="block" id="tradeoffs">
+  <div class="wrap">
+    <div class="sec-head"><div><h2>What I chose not to build, and what comes next</h2></div></div>
+    <div class="cols">
+      <div><h3>Trade-offs made</h3><ul>
+        <li><strong>One call per document, no chunking.</strong> Bills fit easily in context; chunking would split labels from values.</li>
+        <li><strong>Text layer only, no vision.</strong> The brief rules out OCR. A vision pass is the obvious fallback for scanned bills.</li>
+        <li><strong>Two providers behind one interface.</strong> Gemini (with a fallback ladder) and OpenAI; adding Claude is one class with an <code>extract()</code> method.</li>
+        <li><strong>Gas m³ left unconverted.</strong> Converting volume to kWh needs each bill's calorific value; a default factor would be a silent guess.</li>
+      </ul></div>
+      <div><h3>With more time</h3><ul>
+        <li><strong>A larger labelled set</strong> per vendor template, with accuracy tracked in CI on every prompt change.</li>
+        <li><strong>Second-opinion extraction</strong> from a different model on low-confidence rows only, so cost scales with doubt.</li>
+        <li><strong>History checks:</strong> flag usage that jumps against the same meter's previous bills.</li>
+        <li><strong>Emission factors</strong> joined on country and period to turn activity data into tCO₂e.</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap"><span>Built by Umarfarook for the Pulsora take-home. <span id="gen-at"></span></span><span><a href="https://github.com/Umarfarook1/utility-invoice-extractor" data-repo>Source on GitHub</a></span></div></footer>
+
+<script>
+const FIELD_LABELS = {
+  vendor_name: "Vendor", invoice_number: "Invoice number", invoice_date: "Invoice date",
+  service_address: "Service address", total_amount: "Total amount",
+  usage: "Usage", billing_period_start: "Billing period start", billing_period_end: "Billing period end",
+};
+const CHECK_KEY = { usage: "usage_amount" };
+let DATA, current = 0, currentService = 0, view = "text";
+
+const $ = (sel, root = document) => root.querySelector(sel);
+const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+const fmtNum = (v) => typeof v === "number" ? v.toLocaleString("en-US", { maximumFractionDigits: 3 }) : v;
+
+fetch("data.json").then(r => r.json()).then(d => { DATA = d; init(); }).catch(() => {
+  $("#inv-buttons").innerHTML = '<p class="loading">Could not load data.json</p>';
+});
+
+function init() {
+  const inv = DATA.invoices;
+  const langs = new Set(inv.map(i => i.extraction?.document_language).filter(Boolean));
+  const countries = new Set(inv.map(i => i.extraction?.country).filter(Boolean));
+  const utils = new Set(inv.flatMap(i => i.rows.map(r => r.values.utility_type)).filter(Boolean));
+  const rows = inv.reduce((n, i) => n + i.rows.length, 0);
+  const avgTokens = inv.reduce((s, i) => s + (i.input_tokens || 0) + (i.output_tokens || 0), 0) / inv.length;
+
+  setStat("invoices", inv.length);
+  setStat("lang-countries", `${langs.size} / ${countries.size}`);
+  setStat("utilities", [...utils].sort().join(", "));
+  setStat("rows", rows);
+  setStat("cost", "1", `about ${Math.round(avgTokens / 1000)}k tokens, on a free tier`);
+  document.querySelectorAll('[data-stat="languages"]').forEach(n => n.textContent = langs.size);
+  document.querySelectorAll('[data-stat="countries"]').forEach(n => n.textContent = countries.size);
+  const ev = DATA.evaluation;
+  if (ev) {
+    setStat("accuracy", `${(ev.field_accuracy * 100).toFixed(1)}%`, `${ev.fields_correct}/${ev.fields_total}`);
+    const hidden = ev.misses.filter(m => m.file.startsWith("08_")).length;
+    setStat("misses", ev.misses.length, `${hidden} from one PDF's hidden text layer`);
+  }
+  $("#gen-at").textContent = "run " + DATA.generated_at.replace("T", " ").replace("+00:00", " UTC");
+  renderList(); select(0); renderLanguages(); renderEval();
+  document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => { view = t.dataset.view; renderDoc(); }));
+}
+
+function setStat(key, value, small) {
+  const n = document.querySelector(`dd[data-stat="${key}"]`);
+  if (!n) return;
+  n.textContent = value;
+  if (small) n.append(el("small", null, small));
+}
+
+function minConf(i) { return Math.min(...i.rows.map(r => r.values.confidence ?? 0)); }
+function vendorOf(i) { return i.extraction?.vendor_name_latin || i.extraction?.vendor_name?.value || i.file; }
+
+function renderList() {
+  const box = $("#inv-buttons"); box.innerHTML = "";
+  DATA.invoices.forEach((inv, idx) => {
+    const b = el("button", "inv-btn");
+    b.type = "button";
+    const c = minConf(inv);
+    const review = inv.rows.some(r => r.values.needs_review);
+    b.append(el("span", "v", vendorOf(inv)), el("span", "conf-pill " + (review ? "lo" : "hi"), review ? "review" : c.toFixed(2)));
+    const types = [...new Set(inv.rows.map(r => r.values.utility_type).filter(Boolean))].join(" + ");
+    b.append(el("span", "meta", `${inv.extraction?.country || "?"}, ${inv.extraction?.document_language || "?"} · ${types}`));
+    b.addEventListener("click", () => select(idx));
+    box.append(b);
+  });
+}
+
+function select(idx) {
+  current = idx; currentService = 0;
+  document.querySelectorAll(".inv-btn").forEach((b, i) => b.setAttribute("aria-current", i === idx ? "true" : "false"));
+  const inv = DATA.invoices[idx];
+  const link = $("#src-link");
+  if (inv.source_url) { link.href = inv.source_url; link.hidden = false; } else link.hidden = true;
+  renderDoc(); renderFields();
+}
+
+function renderDoc() {
+  const inv = DATA.invoices[current], body = $("#doc-body");
+  document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", t.dataset.view === view ? "true" : "false"));
+  body.innerHTML = "";
+  if (view === "pdf") {
+    const f = el("iframe", "pdf-frame"); f.src = "invoices/" + encodeURIComponent(inv.file); f.title = inv.file;
+    body.append(f); return;
+  }
+  inv.pages.forEach((segs, p) => {
+    const page = el("div", "page");
+    page.append(el("div", "page-no", `Page ${p + 1}`));
+    const pre = el("pre");
+    segs.forEach(s => {
+      if (!s.f.length) { pre.append(document.createTextNode(s.t)); return; }
+      const m = el("mark", null, s.t); m.dataset.fields = s.f.join(" "); pre.append(m);
+    });
+    page.append(pre); body.append(page);
+  });
+}
+
+function fieldWrong(file, utility, name) {
+  const misses = DATA.evaluation?.misses || [];
+  return misses.some(m => m.file === file && m.utility === utility && m.field === name);
+}
+
+function renderFields() {
+  const inv = DATA.invoices[current], box = $("#fields"), x = inv.extraction || {};
+  box.innerHTML = "";
+  const services = x.services || [];
+  if (services.length > 1) {
+    const tabs = el("div", "svc-tabs"); tabs.setAttribute("role", "tablist");
+    services.forEach((s, i) => {
+      const t = el("button", "svc-tab", s.utility_type); t.type = "button"; t.setAttribute("role", "tab");
+      t.setAttribute("aria-selected", i === currentService ? "true" : "false");
+      t.addEventListener("click", () => { currentService = i; renderFields(); });
+      tabs.append(t);
+    });
+    box.append(tabs);
+  }
+  const row = inv.rows[currentService] || inv.rows[0];
+  const v = row.values, checks = row.checks || {};
+  const review = el("div", "review " + (v.needs_review ? "flag" : "ok"));
+  if (v.needs_review) { review.append("Needs review: "); review.append(el("code", null, v.review_reasons || "low confidence")); }
+  else review.textContent = `Passed all checks. Row confidence ${(v.confidence ?? 0).toFixed(2)}`;
+  box.append(review);
+
+  box.append(el("div", "group-label", "Invoice"));
+  ["vendor_name", "invoice_date", "service_address", "invoice_number", "total_amount"].forEach(name =>
+    box.append(fieldCard(inv, name, name, x[name], checks[name], v, name === "total_amount" && x.currency ? " " + x.currency : "")));
+  const s = services[currentService];
+  if (s) {
+    box.append(el("div", "group-label", `Service · ${s.utility_type}`));
+    box.append(fieldCard(inv, "usage", `s${currentService}.usage`, s.usage, checks.usage_amount, v, " " + (v.usage_unit || s.usage_unit || ""), true));
+    box.append(fieldCard(inv, "billing_period_start", `s${currentService}.billing_period_start`, s.billing_period_start, checks.billing_period_start, v));
+    box.append(fieldCard(inv, "billing_period_end", `s${currentService}.billing_period_end`, s.billing_period_end, checks.billing_period_end, v));
+  }
+  if (x.notes?.length) {
+    const n = el("div", "notes"); n.append(el("strong", null, "Model notes"));
+    const ul = el("ul"); x.notes.forEach(t => ul.append(el("li", null, t))); n.append(ul); box.append(n);
+  }
+  const meta = el("div", "notes");
+  meta.textContent = `Answered by ${inv.model}, ${inv.input_tokens?.toLocaleString()} input and ${inv.output_tokens?.toLocaleString()} output tokens. Local language detector: ${inv.detected_language} (${inv.detected_language_prob}).`;
+  box.append(meta);
+}
+
+function fieldCard(inv, name, markKey, sourced, check, rowValues, suffix = "", isUsage = false) {
+  const card = el("div", "field"); card.tabIndex = 0; card.dataset.mark = markKey;
+  const top = el("div", "f-top"); top.append(el("span", "f-name", FIELD_LABELS[name]));
+  const conf = check?.confidence;
+  if (check?.present) top.append(el("span", "f-conf", conf.toFixed(2)));
+  card.append(top);
+  const value = sourced?.value;
+  const val = el("div", "f-value" + (value == null ? " null" : ""), value == null ? "not printed" : fmtNum(value) + suffix);
+  const sameUnit = rowValues.usage_standardized_unit === rowValues.usage_unit;
+  if (isUsage && rowValues.usage_standardized != null && rowValues.usage_standardized_unit && !sameUnit) {
+    val.append(" ", el("span", "f-std", `= ${fmtNum(rowValues.usage_standardized)} ${rowValues.usage_standardized_unit}`));
+  }
+  card.append(val);
+  if (sourced?.source_text) {
+    const qd = el("div", "f-quote"); qd.append(el("q", null, sourced.source_text)); qd.append(` · p.${sourced.page}`); card.append(qd);
+  }
+  const chips = el("div", "chips");
+  if (check?.present) {
+    chips.append(chip({ exact: ["ok", "quote found"], words: ["warn", "quote words found"], missing: ["bad", "quote not in document"] }[check.grounding] || ["na", "not checked"]));
+    if (check.parse && check.parse !== "n/a") chips.append(chip({ agrees: ["ok", "re-parse agrees"], disagrees: ["bad", "re-parse disagrees"], unparsed: ["na", "no re-parse"] }[check.parse]));
+    (check.issues || []).forEach(i => chips.append(chip([i.startsWith("error") ? "bad" : "warn", i.split(":").slice(2).join(":").replaceAll("_", " ")])));
+  }
+  const label = inv.label;
+  if (label) {
+    const utility = inv.extraction?.services?.[currentService]?.utility_type;
+    const evalName = name === "usage" ? "usage_amount" : name;
+    if (["vendor_name", "invoice_date", "service_address", "usage_amount", "billing_period_start", "billing_period_end"].includes(evalName)) {
+      chips.append(chip(fieldWrong(inv.file, utility, evalName) ? ["bad", "differs from label"] : ["ok", "matches label"]));
+    }
+  }
+  if (chips.childElementCount) card.append(chips);
+  if (check?.present) {
+    const bar = el("div", "bar"); const i = el("i", conf >= 0.9 ? "" : conf >= 0.75 ? "mid" : "low");
+    i.style.width = `${Math.round(conf * 100)}%`; bar.append(i); card.append(bar);
+  }
+  const on = () => highlight(markKey, true), off = () => highlight(markKey, false);
+  card.addEventListener("mouseenter", on); card.addEventListener("mouseleave", off);
+  card.addEventListener("focus", on); card.addEventListener("blur", off);
+  return card;
+}
+
+function chip([kind, text]) { return el("span", "chip " + kind, text); }
+
+function highlight(key, on) {
+  const marks = [...document.querySelectorAll("#doc-body mark")].filter(m => m.dataset.fields.split(" ").includes(key));
+  marks.forEach(m => m.classList.toggle("hot", on));
+  if (on && marks[0] && view === "text") {
+    const body = $("#doc-body"), r = marks[0].getBoundingClientRect(), b = body.getBoundingClientRect();
+    if (r.top < b.top || r.bottom > b.bottom) body.scrollTo({ top: body.scrollTop + r.top - b.top - b.height / 3, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }
+}
+
+function renderLanguages() {
+  const tbody = $("#lang-table tbody");
+  DATA.invoices.forEach(inv => {
+    const x = inv.extraction || {}, s = x.services?.[0];
+    const pairs = [["date", x.invoice_date], ["usage", s?.usage, s ? " " + (inv.rows[0].values.usage_unit || "") : ""]];
+    pairs.forEach(([kind, f, suffix = ""], k) => {
+      if (!f?.source_text) return;
+      const tr = el("tr");
+      tr.append(el("td", null, k === 0 ? vendorOf(inv) : ""), el("td", "mono", k === 0 ? (x.document_language || "") : ""));
+      const printed = el("td"); printed.append(el("span", "q", f.source_text)); tr.append(printed);
+      tr.append(el("td", "arrow", "→"), el("td", "mono num", fmtNum(f.value) + suffix));
+      const rule = kind === "date" ? `${x.country || "?"} reads dates ${inv.locale.date_order}` : `${x.country || "?"} uses decimal ${inv.locale.decimal_comma ? "comma" : "point"}`;
+      tr.append(el("td", null, rule));
+      tbody.append(tr);
+    });
+  });
+}
+
+function renderEval() {
+  const ev = DATA.evaluation; if (!ev) return;
+  $("#acc-big").textContent = `${(ev.field_accuracy * 100).toFixed(1)}%`;
+  $("#acc-label").textContent = `${ev.fields_correct} of ${ev.fields_total} required fields match the hand labels across ${ev.invoices.length} invoices.`;
+  const stats = $("#eval-stats");
+  [["Wrong values caught by the review flag", ev.errors_caught_by_review_flag],
+   ["Flagged rows that really had an error", ev.flagged_rows_that_had_an_error],
+   ["Unexpected extra service rows", ev.extra_rows.length]].forEach(([k, v]) => {
+    const d = el("div"); d.append(el("dt", null, k), el("dd", null, String(v))); stats.append(d);
+  });
+  const ul = $("#fbars");
+  Object.entries(ev.per_field).forEach(([k, v]) => {
+    const li = el("li"); li.append(el("span", null, k.replaceAll("_", " ")));
+    const t = el("div", "track"), f = el("div", "fill"); f.style.width = `${v.accuracy * 100}%`; t.append(f);
+    li.append(t, el("span", "pct", `${v.correct}/${v.total}`)); ul.append(li);
+  });
+  const tb = $("#miss-table tbody");
+  if (!ev.misses.length) { const tr = el("tr"); const td = el("td", null, "No misses."); td.colSpan = 5; tr.append(td); tb.append(tr); }
+  ev.misses.forEach(m => {
+    const tr = el("tr");
+    tr.append(el("td", null, m.file), el("td", "mono", m.field), el("td", "mono", String(m.expected ?? "(empty)")), el("td", "mono", String(m.got ?? "(empty)")), el("td", null, m.flagged ? "yes" : "no"));
+    tb.append(tr);
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+{
+  "label": "05_de_de_electricity-gas-water_mindener-stadtwerke.pdf",
+  "model": "gemini-3.6-flash",
+  "prompt_version": "2026-10-01.3",
+  "input_tokens": 10954,
+  "output_tokens": 4293,
+  "latency_s": 18.84,
+  "extraction": {
+    "is_utility_invoice": true,
+    "document_language": "de",
+    "country": "DE",
+    "vendor_name": {
+      "value": "Mindener Stadtwerke GmbH",
+      "source_text": "Mindener Stadtwerke GmbH",
+      "page": 1
+    },
+    "vendor_name_latin": null,
+    "invoice_number": {
+      "value": "RE 799999999",
+      "source_text": "Rechnungsnummer: RE 799999999",
+      "page": 1
+    },
+    "invoice_date": {
+      "value": "2023-01-20",
+      "source_text": "Rechnungsdatum: 20. Januar 2023",
+      "page": 1
+    },
+    "service_address": {
+      "value": "Musterstraße 99, 99999 Musterstadt",
+      "source_text": "Verbrauchsstelle: Musterstraße 99, 99999 Musterstadt",
+      "page": 1
+    },
+    "currency": "EUR",
+    "total_amount": {
+      "value": 2186.27,
+      "source_text": "Gesamtbetrag 2.186,27",
+      "page": 1
+    },
+    "services": [
+      {
+        "utility_type": "electricity",
+        "usage": {
+          "value": 2157.0,
+          "source_text": "2.157 kWh",
+          "page": 1
+        },
+        "usage_unit": "kWh",
+        "billing_period_start": {
+          "value": "2022-01-01",
+          "source_text": "01.01.2022",
+          "page": 1
+        },
+        "billing_period_end": {
+          "value": "2022-12-31",
+          "source_text": "31.12.2022",
+          "page": 1
+        },
+        "meter_reading_start": 715.0,
+        "meter_reading_end": 2872.0
+      },
+      {
+        "utility_type": "gas",
+        "usage": {
+          "value": 12853.0,
+          "source_text": "12.853 kWh",
+          "page": 1
+        },
+        "usage_unit": "kWh",
+        "billing_period_start": {
+          "value": "2022-01-01",
+          "source_text": "01.01.2022",
+          "page": 1
+        },
+        "billing_period_end": {
+          "value": "2022-12-31",
+          "source_text": "31.12.2022",
+          "page": 1
+        },
+        "meter_reading_start": null,
+        "meter_reading_end": null
+      },
+      {
+        "utility_type": "water",
+        "usage": {
+          "value": 77.0,
+          "source_text": "77 m³",
+          "page": 1
+        },
+        "usage_unit": "m³",
+        "billing_period_start": {
+          "value": "2022-01-01",
+          "source_text": "01.01.2022",
+          "page": 1
+        },
+        "billing_period_end": {
+          "value": "2022-12-31",
+          "source_text": "31.12.2022",
+          "page": 1
+        },
+        "meter_reading_start": 57.0,
+        "meter_reading_end": 134.0
+      }
+    ],
+    "notes": [
+      "Gas consumption was measured in m³ (start: 14065 m³, end: 15408 m³) but billed in kWh (12853 kWh); meter readings omitted as they differ in unit from billed usage.",
+      "Water delivery is billed in the name and on behalf of Mindener Wasser GmbH."
+    ]
+  }
+}

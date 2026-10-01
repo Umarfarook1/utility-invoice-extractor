@@ -1,0 +1,64 @@
+{
+  "label": "04_gb_en_water_affinity-water.pdf",
+  "model": "gemini-3.6-flash",
+  "prompt_version": "2026-10-01.3",
+  "input_tokens": 4064,
+  "output_tokens": 1386,
+  "latency_s": 122.65,
+  "extraction": {
+    "is_utility_invoice": true,
+    "document_language": "en",
+    "country": "GB",
+    "vendor_name": {
+      "value": "Affinity Water",
+      "source_text": "Affinity Water",
+      "page": 1
+    },
+    "vendor_name_latin": null,
+    "invoice_number": {
+      "value": null,
+      "source_text": null,
+      "page": null
+    },
+    "invoice_date": {
+      "value": "2020-03-04",
+      "source_text": "04 March 2020",
+      "page": 1
+    },
+    "service_address": {
+      "value": "456 Sample Street, Sampleton, Sampleshire, AB12 3AB",
+      "source_text": "456 Sample Street, Sampleton, Sampleshire,\n   AB12 3AB",
+      "page": 1
+    },
+    "currency": "GBP",
+    "total_amount": {
+      "value": 235.14,
+      "source_text": "£235.14",
+      "page": 1
+    },
+    "services": [
+      {
+        "utility_type": "water",
+        "usage": {
+          "value": 96.0,
+          "source_text": "96m3",
+          "page": 2
+        },
+        "usage_unit": "m3",
+        "billing_period_start": {
+          "value": "2019-08-16",
+          "source_text": "16/08/2019",
+          "page": 2
+        },
+        "billing_period_end": {
+          "value": "2020-02-10",
+          "source_text": "10/02/2020",
+          "page": 2
+        },
+        "meter_reading_start": 6527.0,
+        "meter_reading_end": 6623.0
+      }
+    ],
+    "notes": []
+  }
+}

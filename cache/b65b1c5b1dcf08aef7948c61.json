@@ -1,0 +1,89 @@
+{
+  "label": "01_us_en_electricity-gas_sdge.pdf",
+  "model": "gemini-3.5-flash",
+  "prompt_version": "2026-10-01.3",
+  "input_tokens": 4283,
+  "output_tokens": 3626,
+  "latency_s": 24.96,
+  "extraction": {
+    "is_utility_invoice": true,
+    "document_language": "en",
+    "country": "US",
+    "vendor_name": {
+      "value": "San Diego Gas & Electric",
+      "source_text": "SAN DIEGO GAS & ELECTRIC",
+      "page": 1
+    },
+    "vendor_name_latin": null,
+    "invoice_number": {
+      "value": null,
+      "source_text": null,
+      "page": null
+    },
+    "invoice_date": {
+      "value": "2016-06-08",
+      "source_text": "DATE MAILED  Jun 8, 2016",
+      "page": 1
+    },
+    "service_address": {
+      "value": "4800 ELECTRIC AVE SD 92129",
+      "source_text": "SERVICE ADDRESS: 4800 ELECTRIC AVE SD 92129",
+      "page": 1
+    },
+    "currency": "USD",
+    "total_amount": {
+      "value": 167.23,
+      "source_text": "Total Current Charges  $167.23",
+      "page": 3
+    },
+    "services": [
+      {
+        "utility_type": "gas",
+        "usage": {
+          "value": 23.0,
+          "source_text": "23 Therms",
+          "page": 1
+        },
+        "usage_unit": "Therms",
+        "billing_period_start": {
+          "value": "2016-05-05",
+          "source_text": "May 5, 2016",
+          "page": 1
+        },
+        "billing_period_end": {
+          "value": "2016-06-06",
+          "source_text": "Jun 6, 2016",
+          "page": 1
+        },
+        "meter_reading_start": 9695.0,
+        "meter_reading_end": 9717.0
+      },
+      {
+        "utility_type": "electricity",
+        "usage": {
+          "value": 573.0,
+          "source_text": "573 kWh",
+          "page": 1
+        },
+        "usage_unit": "kWh",
+        "billing_period_start": {
+          "value": "2016-05-05",
+          "source_text": "May 5, 2016",
+          "page": 1
+        },
+        "billing_period_end": {
+          "value": "2016-06-06",
+          "source_text": "Jun 6, 2016",
+          "page": 1
+        },
+        "meter_reading_start": 6542.0,
+        "meter_reading_end": 7115.0
+      }
+    ],
+    "notes": [
+      "No explicit invoice number was found, only an Account Number.",
+      "Used DATE MAILED as the invoice date.",
+      "The total current charges ($167.23) differed from the total amount due ($147.50) due to a previous credit/payment balance."
+    ]
+  }
+}

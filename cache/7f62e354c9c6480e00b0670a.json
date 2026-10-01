@@ -1,0 +1,87 @@
+{
+  "label": "03_gb_en_electricity-gas_octopus-energy.pdf",
+  "model": "gemini-3.6-flash",
+  "prompt_version": "2026-10-01.3",
+  "input_tokens": 4844,
+  "output_tokens": 2336,
+  "latency_s": 11.63,
+  "extraction": {
+    "is_utility_invoice": true,
+    "document_language": "en",
+    "country": "GB",
+    "vendor_name": {
+      "value": "Octopus Energy",
+      "source_text": "Octopus Energy",
+      "page": 1
+    },
+    "vendor_name_latin": null,
+    "invoice_number": {
+      "value": "145777963",
+      "source_text": "Bill Reference: 145777963",
+      "page": 1
+    },
+    "invoice_date": {
+      "value": "2023-06-02",
+      "source_text": "2nd June 2023",
+      "page": 1
+    },
+    "service_address": {
+      "value": "2nd Floor, UK House, 164-182 Oxford Street United Kingdom, W1D 1NN",
+      "source_text": "Supply Address: 2nd Floor, UK House, 164-182 Oxford Street United Kingdom, W1D 1NN",
+      "page": 2
+    },
+    "currency": "GBP",
+    "total_amount": {
+      "value": 44.87,
+      "source_text": "Total charges for bill £ 44.87",
+      "page": 2
+    },
+    "services": [
+      {
+        "utility_type": "electricity",
+        "usage": {
+          "value": 76.4,
+          "source_text": "76.4 kWh",
+          "page": 2
+        },
+        "usage_unit": "kWh",
+        "billing_period_start": {
+          "value": "2023-05-17",
+          "source_text": "17th May 2023",
+          "page": 2
+        },
+        "billing_period_end": {
+          "value": "2023-06-01",
+          "source_text": "1st June 2023",
+          "page": 2
+        },
+        "meter_reading_start": 26180.6,
+        "meter_reading_end": 26257.0
+      },
+      {
+        "utility_type": "gas",
+        "usage": {
+          "value": 72.8,
+          "source_text": "72.8 kWh",
+          "page": 2
+        },
+        "usage_unit": "kWh",
+        "billing_period_start": {
+          "value": "2023-05-17",
+          "source_text": "17th May 2023",
+          "page": 2
+        },
+        "billing_period_end": {
+          "value": "2023-06-01",
+          "source_text": "1st June 2023",
+          "page": 2
+        },
+        "meter_reading_start": 8064.6,
+        "meter_reading_end": 8071.0
+      }
+    ],
+    "notes": [
+      "Gas consumption of 6.4 m3 was converted to 72.8 kWh for energy charges calculation."
+    ]
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "label": "02_us_en_gas_peoples-gas.pdf",
+  "model": "gemini-3.6-flash",
+  "prompt_version": "2026-10-01.3",
+  "input_tokens": 2132,
+  "output_tokens": 1720,
+  "latency_s": 34.98,
+  "extraction": {
+    "is_utility_invoice": true,
+    "document_language": "en",
+    "country": "US",
+    "vendor_name": {
+      "value": "Peoples Gas",
+      "source_text": "Peoples Gas",
+      "page": 1
+    },
+    "vendor_name_latin": null,
+    "invoice_number": {
+      "value": "0123456789",
+      "source_text": "INVOICE: 0123456789",
+      "page": 1
+    },
+    "invoice_date": {
+      "value": "2026-02-03",
+      "source_text": "02/03/2026",
+      "page": 1
+    },
+    "service_address": {
+      "value": "123 MAIN ST CHICAGO IL 60601-6207",
+      "source_text": "123 MAIN ST   Account Summary\n   CHICAGO IL 60601-6207",
+      "page": 1
+    },
+    "currency": "USD",
+    "total_amount": {
+      "value": 117.7,
+      "source_text": "$117.70",
+      "page": 1
+    },
+    "services": [
+      {
+        "utility_type": "gas",
+        "usage": {
+          "value": 72.6,
+          "source_text": "72.6 Therms",
+          "page": 1
+        },
+        "usage_unit": "Therms",
+        "billing_period_start": {
+          "value": "2026-01-05",
+          "source_text": "01/05/2026",
+          "page": 1
+        },
+        "billing_period_end": {
+          "value": "2026-02-02",
+          "source_text": "02/02/2026",
+          "page": 1
+        },
+        "meter_reading_start": null,
+        "meter_reading_end": null
+      }
+    ],
+    "notes": [
+      "Meter readings are printed in CCF (6230 to 6299), which differs from the usage billing unit in Therms (72.6 Therms), so meter readings are set to null as per schema rules."
+    ]
+  }
+}
